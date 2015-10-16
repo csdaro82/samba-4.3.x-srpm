@@ -5,18 +5,15 @@
 # Assure that sorting is case sensitive
 LANG=C
 
+MOCKS+=samba4repo-f22-x86_64
+MOCKS+=samba4repo-7-x86_64
 MOCKS+=samba4repo-6-x86_64
-#MOCKS+=samba4repo-5-x86_64
-#MOCKS+=samba4repo-4-x86_64
 
 #MOCKS+=samba4repo-6-i386
-#MOCKS+=samba4repo-5-i386
-#MOCKS+=samba4repo-4-i386
 
 REPOBASEDIR=/var/www/linux/samba4repo
 
-SPEC := `ls *.spec | head -1`
-PKGNAME := "`ls *.spec | head -1 | sed 's/.spec$$//g'`"
+SPEC := `ls *.spec`
 
 all:: verifyspec $(MOCKS)
 
@@ -29,13 +26,14 @@ verifyspec:: FORCE
 
 srpm:: verifyspec FORCE
 	@echo "Building SRPM with $(SPEC)"
-	rm -f $(PKGNAME)*.src.rpm
-	rpmbuild --define '_sourcedir $(PWD)' \
-		--define '_srcrpmdir $(PWD)' \
+	rm -rf rpmbuild
+	rpmbuild --define '_topdir $(PWD)/rpmbuild' \
+		--define '_sourcedir $(PWD)' \
 		-bs $(SPEC) --nodeps
 
 build:: srpm FORCE
-	rpmbuild --rebuild `ls *.src.rpm | grep -v ^samba4repo-`
+	rpmbuild --define '_topdir $(PWD)/rpmbuild' \
+		--rebuild rpmbuild/SRPMS/*.src.rpm
 
 $(MOCKS):: verifyspec FORCE
 	@if [ -e $@ -a -n "`find $@ -name \*.rpm`" ]; then \
@@ -76,6 +74,7 @@ install:: $(MOCKS)
 
 clean::
 	rm -rf $(MOCKS)
+	rm -rf rpmbuild
 
 realclean distclean:: clean
 	rm -f *.src.rpm
