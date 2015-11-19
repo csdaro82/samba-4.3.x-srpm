@@ -8,12 +8,12 @@
 
 %define main_release 0.1
 
-%define samba_version 4.1.16
-%define talloc_version 2.1.1
+%define samba_version 4.3.1
+%define talloc_version 2.1.5
 %define ntdb_version 1.0
-%define tdb_version 1.3.4
-%define tevent_version 0.9.22
-%define ldb_version 1.1.19
+%define tdb_version 1.3.8
+%define tevent_version 0.9.26
+%define ldb_version 1.1.23
 # This should be rc1 or nil
 %define pre_release %nil
 
@@ -172,6 +172,9 @@ BuildRequires: python-devel
 BuildRequires: python-tevent
 BuildRequires: quota-devel
 BuildRequires: readline-devel
+%if 0%{with_dc}
+BuildRequires: gnutls-devel
+%endif
 %if %{with_systemd}
 BuildRequires: systemd-devel
 %endif
@@ -292,6 +295,7 @@ Summary: Samba AD Domain Controller Libraries
 Group: Applications/System
 Requires: %{name}-common = %{samba_depver}
 Requires: %{name}-libs = %{samba_depver}
+Requires: gnutls
 
 Provides: samba4-dc-libs = %{samba_depver}
 Obsoletes: samba4-dc-libs < %{samba_depver}
@@ -606,7 +610,6 @@ LDFLAGS="-Wl,-z,relro,-z,now" \
         --with-pammodulesdir=%{_libdir}/security \
         --with-lockdir=/var/lib/samba \
         --with-cachedir=/var/lib/samba \
-        --disable-gnutls \
         --disable-rpath-install \
         --with-shared-modules=%{_samba4_modules} \
         --bundled-libraries=%{_samba4_libraries} \
@@ -619,6 +622,7 @@ LDFLAGS="-Wl,-z,relro,-z,now" \
         --with-system-mitkrb5 \
 %endif
 %if ! %{with_dc}
+        --disable-gnutls \
         --without-ad-dc \
 %endif
 %if %{with_vfs_glusterfs}
@@ -628,7 +632,6 @@ LDFLAGS="-Wl,-z,relro,-z,now" \
 %endif
 %if %{with_clustering_support}
         --with-cluster-support \
-        --enable-old-ctdb \
 %endif
 %if %{with_profiling}
         --with-profiling-data \
@@ -1571,6 +1574,9 @@ rm -rf %{buildroot}
 %{_mandir}/man8/pam_winbind.8*
 
 %changelog
+* Fri Oct 16 2015 - Nico Kadel-Garcia <nkadel@gmail.com> - 4.1.21-0.1
+- Update to 4.1.21
+
 * Sat Jan 24 2015 - Nico Kadel-Garcia <nkadel@gmail.com> - 4.1.16-0.1
 - Update to 4.1.16
 - Update tdb_version ldb_version

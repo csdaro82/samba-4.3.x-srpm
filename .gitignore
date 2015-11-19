@@ -3,5 +3,6 @@
 *.tar.*
 *~
 \#*
+rpmbuild
 samba-*[0-9]/
 samba4repo-*
