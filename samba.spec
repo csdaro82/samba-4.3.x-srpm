@@ -1,6 +1,6 @@
 # rpmbuild --rebuild --with testsuite --without clustering samba.src.rpm
 #
-# The testsuite is disabled by default. Set --with testsuite or %bcond_without
+# The testsuite is disabled by default. Set --with testsuite or %\bcond_without
 # to run the Samba torture testsuite.
 %bcond_with testsuite
 # ctdb is enabled by default, you can disable it with: --without clustering
@@ -8,12 +8,12 @@
 
 %define main_release 0.1
 
-%define samba_version 4.3.1
+%define samba_version 4.3.4
 %define talloc_version 2.1.5
 %define ntdb_version 1.0
 %define tdb_version 1.3.8
 %define tevent_version 0.9.26
-%define ldb_version 1.1.23
+%define ldb_version 1.1.25
 # This should be rc1 or nil
 %define pre_release %nil
 
@@ -895,7 +895,7 @@ rm -rf %{buildroot}
 %{_bindir}/cifsdd
 %{_bindir}/dbwrap_tool
 %{_bindir}/nmblookup
-%{_bindir}/nmblookup4
+#%{_bindir}/nmblookup4
 %{_bindir}/oLschema2ldif
 %{_bindir}/regdiff
 %{_bindir}/regpatch
@@ -906,7 +906,7 @@ rm -rf %{buildroot}
 %{_bindir}/sharesec
 %{_bindir}/smbcacls
 %{_bindir}/smbclient
-%{_bindir}/smbclient4
+#%{_bindir}/smbclient4
 %{_bindir}/smbcquotas
 %{_bindir}/smbget
 #%{_bindir}/smbiconv
@@ -917,7 +917,7 @@ rm -rf %{buildroot}
 %{_bindir}/smbtar
 %{_bindir}/smbtree
 %{_mandir}/man1/dbwrap_tool.1*
-%{_mandir}/man1/nmblookup.1*
+#%{_mandir}/man1/nmblookup.1*
 %{_mandir}/man1/oLschema2ldif.1*
 %{_mandir}/man1/regdiff.1*
 %{_mandir}/man1/regpatch.1*
@@ -941,17 +941,17 @@ rm -rf %{buildroot}
 %{_mandir}/man8/smbta-util.8*
 
 ## we don't build it for now
-%if %{with_internal_ntdb}
-%{_mandir}/man3/ntdb.3*
-%{_mandir}/man8/ntdbbackup.8*
-%{_mandir}/man8/ntdbdump.8*
-%{_mandir}/man8/ntdbrestore.8*
-%{_mandir}/man8/ntdbtool.8*
-%{_bindir}/ntdbbackup
-%{_bindir}/ntdbdump
-%{_bindir}/ntdbrestore
-%{_bindir}/ntdbtool
-%endif
+#%if %{with_internal_ntdb}
+#%{_mandir}/man3/ntdb.3*
+#%{_mandir}/man8/ntdbbackup.8*
+#%{_mandir}/man8/ntdbdump.8*
+#%{_mandir}/man8/ntdbrestore.8*
+#%{_mandir}/man8/ntdbtool.8*
+#%{_bindir}/ntdbbackup
+#%{_bindir}/ntdbdump
+#%{_bindir}/ntdbrestore
+#%{_bindir}/ntdbtool
+#%endif
 
 %if %{with_internal_tdb}
 %{_bindir}/tdbbackup
