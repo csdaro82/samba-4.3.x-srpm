@@ -56,15 +56,22 @@
 %global libwbc_alternatives_suffix -64
 %endif
 
+%global with_dc 1
 %global with_mitkrb5 1
-%global with_dc 0
 
 %if %{with testsuite}
 # The testsuite only works with a full build right now.
-%global with_mitkrb5 0
 %global with_dc 1
 %endif
 
+# Domain controller cannot compile with mitkrb5
+# Consider supporting heimdal compilation
+%if %{with_dc}
+%global with_mitkrb5 0
+%else
+%global with_mitkrb5 1
+%endif
+ 
 %global with_clustering_support 0
 
 %if %{with clustering}
@@ -1974,6 +1981,7 @@ rm -rf %{buildroot}
 * Sun Apr 10 2016 Nico Kadel-Garcia <nkadel@gmail.com> - 4.4.0-0.1
 - Update to Samba 4.4.0
 - Backport to RHEL 7
+- Activate with_dc, base with_mitkrb5 on value of with_dc
 
 * Tue Mar 08 2016 Guenther Deschner <gdeschner@redhat.com> - 4.4.0-0.7.rc4
 - Update to Samba 4.4.0rc4

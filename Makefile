@@ -10,9 +10,8 @@ MOCKS+=samba4repo-7-x86_64
 # Give up on RHEL 6, current upstream SRPMs require systemd
 #MOCKS+=samba4repo-6-x86_64
 
-#MOCKS+=samba4repo-6-i386
-
-REPOBASEDIR=/var/www/linux/samba4repo
+#REPOBASEDIR=/var/www/linux/samba4repo
+REPOBASEDIR:=`/bin/pwd`/../samba4repo
 
 SPEC := `ls *.spec`
 
