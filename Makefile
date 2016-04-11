@@ -7,7 +7,8 @@ LANG=C
 
 MOCKS+=samba4repo-f23-x86_64
 MOCKS+=samba4repo-7-x86_64
-MOCKS+=samba4repo-6-x86_64
+# Give up on RHEL 6, current upstream SRPMs require systemd
+#MOCKS+=samba4repo-6-x86_64
 
 #MOCKS+=samba4repo-6-i386
 
