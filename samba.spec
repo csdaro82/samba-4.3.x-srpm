@@ -8,7 +8,7 @@
 
 %define main_release 0.1
 
-%define samba_version 4.4.0
+%define samba_version 4.4.2
 %define talloc_version 2.1.6
 %define tdb_version 1.3.8
 %define tevent_version 0.9.28
@@ -633,7 +633,7 @@ module necessary to communicate to the Winbind Daemon
 ### CTDB
 %if %with_clustering_support
 %package -n ctdb
-Summary: A Clustered Database based on Samba's Trivial Database (TDB)
+Summary: A Clustered Database based on Samba Trivial Database (TDB)
 Group: System Environment/Daemons
 
 Requires: %{name}-client-libs = %{samba_depver}
@@ -1978,6 +1978,9 @@ rm -rf %{buildroot}
 %endif # with_clustering_support
 
 %changelog
+* Wed Apr 20 Nico Kadel-Garcia <nkadel@gmail.com> - 4.4.2-0.1
+- Update to Samba 4.4.0
+
 * Sun Apr 10 2016 Nico Kadel-Garcia <nkadel@gmail.com> - 4.4.0-0.1
 - Update to Samba 4.4.0
 - Backport to RHEL 7
