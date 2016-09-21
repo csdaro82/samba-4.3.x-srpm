@@ -50,7 +50,7 @@
 %endif
 %endif
 
-%global libwbc_alternatives_version 0.12
+%global libwbc_alternatives_version 0.13
 %global libwbc_alternatives_suffix %nil
 %if 0%{?__isa_bits} == 64
 %global libwbc_alternatives_suffix -64
