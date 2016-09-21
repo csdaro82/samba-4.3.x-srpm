@@ -8,11 +8,11 @@
 
 %define main_release 0.1
 
-%define samba_version 4.4.5
-%define talloc_version 2.1.7
-%define tdb_version 1.3.8
-%define tevent_version 0.9.28
-%define ldb_version 1.1.26
+%define samba_version 4.5.0
+%define talloc_version 2.1.8
+%define tdb_version 1.3.11
+%define tevent_version 0.9.30
+%define ldb_version 1.1.27
 # This should be rc1 or nil
 %define pre_release %nil
 
@@ -70,7 +70,7 @@
 %else
 %global with_mitkrb5 1
 %endif
- 
+
 %global with_clustering_support 0
 
 %if %{with clustering}
@@ -114,8 +114,8 @@ Source6: samba.pamd
 Source200: README.dc
 Source201: README.downgrade
 
-Patch0:    samba-4.4.5-fix_resolving_trusted_domain_users.patch
-Patch1: samba-4.4.5-ntvfs_build.patch
+#Patch0:    samba-4.4.5-fix_resolving_trusted_domain_users.patch
+#Patch1: samba-4.4.5-ntvfs_build.patch
 
 BuildRoot:      %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 
@@ -701,8 +701,8 @@ and use CTDB instead.
 %prep
 %setup -q -n samba-%{version}%{pre_release}
 
-%patch0 -p 1 -b .samba-4.4.5-fix_resolving_trusted_domain_users.patch
-%patch1 -p 1 -b .samba-4.4.5-ntvfs_build.patch
+#%patch0 -p 1 -b .samba-4.4.5-fix_resolving_trusted_domain_users.patch
+#%patch1 -p 1 -b .samba-4.4.5-ntvfs_build.patch
 
 %build
 %global _talloc_lib ,talloc,pytalloc,pytalloc-util
@@ -2009,6 +2009,9 @@ rm -rf %{buildroot}
 %endif # with_clustering_support
 
 %changelog
+* Sun Sep 18 2016 Nico Kadel-Garcia <nkadel@gmail.com> - 4.5.0
+- Update to Samba 4.5.0
+
 * Sun Jul 17 2016 Nico Kadel-Garcia <nkadel@gmail.com> - 4.4.5-0.1
 - Rebase on rawhide 4.4.5 .spec file
 - Separate all hyphenated words in .spec text to word pairs for RPM/emacs use
@@ -2878,7 +2881,7 @@ rm -rf %{buildroot}
 - Numerous improvements and bugfixes included
 - package libsmbsharemodes too
 - remove smbldap-tools as they are already packaged separately in Fedora
-- Fix bug 245506 
+- Fix bug 245506
 
 * Tue Oct 2 2007 Simo Sorce <ssorce@redhat.com> 3.0.26a-1.fc8
 - rebuild with AD DNS Update support
@@ -2971,7 +2974,7 @@ rm -rf %{buildroot}
 - adjust the Requires: for the scripts, add "chkconfig --add smb"
 
 * Tue Mar 20 2007 Simo Sorce <ssorce@redhat.com> 3.0.24-6.fc7
-- Do not put comments inline on smb.conf options, they may be read
+- do not put comments inline on smb.conf options, they may be read
   as part of the value (for example log files names)
 
 * Mon Mar 19 2007 Simo Sorce <ssorce@redhat.com> 3.0.24-5.fc7
@@ -3280,7 +3283,7 @@ rm -rf %{buildroot}
   bugzilla #121356
 
 * Mon Apr 5 2004 Jay Fenlason <fenlason@redhat.com> 3.0.3-2.pre2
-- New upstream version  
+- New upstream version
 - Updated configure line to remove --with-fhs and to explicitly set all
   the directories that --with-fhs was setting.  We were overriding most of
   them anyway.  This closes #118598
@@ -3298,7 +3301,7 @@ rm -rf %{buildroot}
 * Mon Feb 16 2004 Jay Fenlason <fenlason@redhat.com> 3.0.2a-1
 - Upgrade to 3.0.2a
 
-* Mon Feb 16 2004 Karsten Hopp <karsten@redhat.de> 3.0.2-7 
+* Mon Feb 16 2004 Karsten Hopp <karsten@redhat.de> 3.0.2-7
 - fix ownership in -common package
 
 * Fri Feb 13 2004 Elliot Lee <sopwith@redhat.com>
@@ -3413,7 +3416,7 @@ rm -rf %{buildroot}
 - use internal dep generator.
 
 * Sat Dec 14 2002 Tim Powers <timp@redhat.com> 2.2.7-4
-- Do not use rpms internal dep generator
+- do not use rpms internal dep generator
 
 * Mon Dec 02 2002 Elliot Lee <sopwith@redhat.com> 2.2.7-3
 - Fix missing doc files.
@@ -3434,7 +3437,7 @@ rm -rf %{buildroot}
 
 * Fri Jul 26 2002 Trond Eivind Glomsrød <teg@redhat.com> 2.2.5-7
 - Enable VFS support and compile the "recycling" module (#69796)
-- more selective includes of the examples dir 
+- more selective includes of the examples dir
 
 * Tue Jul 23 2002 Trond Eivind Glomsrød <teg@redhat.com> 2.2.5-6
 - Fix the lpq parser for better handling of LPRng systems (#69352)
@@ -3455,11 +3458,11 @@ rm -rf %{buildroot}
 - 2.2.5
 
 * Fri Jun 14 2002 Trond Eivind Glomsrød <teg@redhat.com> 2.2.4-5
-- Move the post/preun of winbind into the -common subpackage, 
+- Move the post/preun of winbind into the -common subpackage,
   where the script is (#66128)
 
 * Tue Jun  4 2002 Trond Eivind Glomsrød <teg@redhat.com> 2.2.4-4
-- Fix pidfile locations so it runs properly again (2.2.4 
+- Fix pidfile locations so it runs properly again (2.2.4
   added a new directtive - #65007)
 
 * Thu May 23 2002 Tim Powers <timp@redhat.com>
@@ -3480,7 +3483,7 @@ rm -rf %{buildroot}
 - Add libsmbclient.a w/headerfile for KDE (#62202)
 
 * Tue Mar 26 2002 Trond Eivind Glomsrød <teg@redhat.com> 2.2.3a-4
-- Make the logrotate script look the correct place for the pid files 
+- Make the logrotate script look the correct place for the pid files
 
 * Thu Mar 14 2002 Nalin Dahyabhai <nalin@redhat.com> 2.2.3a-3
 - include interfaces.o in pam_smbpass.so, which needs symbols from interfaces.o
@@ -3503,12 +3506,12 @@ rm -rf %{buildroot}
 
 * Tue Nov 13 2001 Trond Eivind Glomsrød <teg@redhat.com> 2.2.2-6
 - Move winbind files to samba-common. Add separate initscript for
-  winbind 
+  winbind
 - Fixes for winbind - protect global variables with mutex, use
   more secure getenv
 
 * Thu Nov  8 2001 Trond Eivind Glomsrød <teg@redhat.com> 2.2.2-5
-- Teach smbadduser about "getent passwd" 
+- Teach smbadduser about "getent passwd"
 - Fix more pid-file references
 - Add (conditional) winbindd startup to the initscript, configured in
   /etc/sysconfig/samba
@@ -3539,8 +3542,8 @@ rm -rf %{buildroot}
   encrypted passwords off the choice is available. (#31351)
 
 * Wed Aug  8 2001 Trond Eivind Glomsrød <teg@redhat.com>
-- Use /var/cache/samba instead of /var/lock/samba 
-- Remove "domain controller" keyword from smb.conf, it's 
+- Use /var/cache/samba instead of /var/lock/samba
+- Remove "domain controller" keyword from smb.conf, it's
   deprecated (from #13704)
 - Sync some examples with smb.conf.default
 - Fix password synchronization (#16987)
@@ -3566,12 +3569,12 @@ rm -rf %{buildroot}
 
 * Tue Jun 19 2001 Trond Eivind Glomsrød <teg@redhat.com>
 - (these changes are from the non-head version)
-- Do not include /usr/sbin/samba, it's the same as the initscript
-- unset TMPDIR, as samba can not write into a TMPDIR owned
+- do not include /usr/sbin/samba, it's the same as the initscript
+- unset TMPDIR, as samba cannot write into a TMPDIR owned
   by root (#41193)
 - Add pidfile: lines for smbd and nmbd and a config: line
   in the initscript  (#15343)
-- Do not use make -j
+- do not use make -j
 - explicitly include /usr/share/samba, not just the files in it
 
 * Tue Jun 19 2001 Bill Nottingham <notting@redhat.com>
@@ -3580,26 +3583,26 @@ rm -rf %{buildroot}
 * Fri Jun  8 2001 Preston Brown <pbrown@redhat.com>
 - enable encypted passwords by default
 
-* Thu Jun  7 2001 Helge Deller <hdeller@redhat.de> 
+* Thu Jun  7 2001 Helge Deller <hdeller@redhat.de>
 - build as 2.2.0-1 release
 - skip the documentation-directories docbook, manpages and yodldocs
-- Do not include *.sgml documentation in package
+- do not include *.sgml documentation in package
 - moved codepage-directory to /usr/share/samba/codepages
-- make it compile with glibc-2.2.3-10 and kernel-headers-2.4.2-2   
+- make it compile with glibc-2.2.3-10 and kernel-headers-2.4.2-2
 
-* Mon May 21 2001 Helge Deller <hdeller@redhat.de> 
+* Mon May 21 2001 Helge Deller <hdeller@redhat.de>
 - updated to samba 2.2.0
 - moved codepages to %%{_datadir}/samba/codepages
 - use all available CPUs for building rpm packages
 - use %%{_xxx} defines at most places in spec-file
 - "License:" replaces "Copyright:"
 - dropped excludearch sparc
-- de-activated japanese patches 100 and 200 for now 
+- de-activated japanese patches 100 and 200 for now
   (they need to be fixed and tested wth 2.2.0)
 - separated swat.desktop file from spec-file and added
   german translations
 - moved /etc/sysconfig/samba to a separate source-file
-- use htmlview instead of direct call to netscape in 
+- use htmlview instead of direct call to netscape in
   swat.desktop-file
 
 * Mon May  7 2001 Bill Nottingham <notting@redhat.com>
@@ -3621,7 +3624,7 @@ rm -rf %{buildroot}
 * Mon Mar 26 2001 Nalin Dahyabhai <nalin@redhat.com>
 - tweak the PAM code some more to try to do a setcred() after initgroups()
 - pull in all of the optflags on i386 and sparc
-- Do not explicitly enable Kerberos support -- it's only used for password
+- do not explicitly enable Kerberos support -- it's only used for password
   checking, and if PAM is enabled it's a no-op anyway
 
 * Mon Mar  5 2001 Tim Waugh <twaugh@redhat.com>
@@ -3689,7 +3692,7 @@ rm -rf %{buildroot}
 
 * Sat Jul 15 2000 Bill Nottingham <notting@redhat.com>
 - move initscript back
-- remove 'Using Samba' book from %%doc 
+- remove 'Using Samba' book from %%doc
 - move stuff to /etc/samba (#13708)
 - default configuration tweaks (#13704)
 - some logrotate tweaks
@@ -3835,7 +3838,7 @@ rm -rf %{buildroot}
 
 * Fri Jun 18 1999 Bill Nottingham <notting@redhat.com>
 - split off clients into separate package
-- Do not run samba by default
+- do not run samba by default
 
 * Mon Jun 14 1999 Bill Nottingham <notting@redhat.com>
 - fix one problem with mount.smb script
@@ -3868,7 +3871,7 @@ rm -rf %{buildroot}
 * Tue Mar 23 1999 Bill Nottingham <notting@redhat.com>
 - logrotate changes
 
-* Sun Mar 21 1999 Cristian Gafton <gafton@redhat.com> 
+* Sun Mar 21 1999 Cristian Gafton <gafton@redhat.com>
 - auto rebuild in the new build environment (release 3)
 
 * Fri Mar 19 1999 Preston Brown <pbrown@redhat.com>
