@@ -114,9 +114,6 @@ Source6: samba.pamd
 Source200: README.dc
 Source201: README.downgrade
 
-#Patch0:    samba-4.4.5-fix_resolving_trusted_domain_users.patch
-#Patch1: samba-4.4.5-ntvfs_build.patch
-
 BuildRoot:      %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 
 Requires(pre): /usr/sbin/groupadd
@@ -201,7 +198,6 @@ BuildRequires: gnutls-devel
 BuildRequires: perl(Parse::Yapp)
 
 %if ! %with_internal_talloc
-#%global libtalloc_version 2.1.7
 %global libtalloc_version %{talloc_version}
 
 BuildRequires: libtalloc-devel >= %{libtalloc_version}
@@ -209,7 +205,6 @@ BuildRequires: pytalloc-devel >= %{libtalloc_version}
 %endif
 
 %if ! %with_internal_tevent
-#%global libtevent_version 0.9.26
 %global libtevent_version %{tevent_version}
 
 BuildRequires: libtevent-devel >= %{libtevent_version}
@@ -217,7 +212,6 @@ BuildRequires: python-tevent >= %{libtevent_version}
 %endif
 
 %if ! %with_internal_ldb
-#%global libldb_version 1.1.25
 %global libldb_version  %{ldb_version}
 
 BuildRequires: libldb-devel >= %{libldb_version}
@@ -225,7 +219,6 @@ BuildRequires: pyldb-devel >= %{libldb_version}
 %endif
 
 %if ! %with_internal_tdb
-#%global libtdb_version 1.3.8
 %global libtdb_version %{tdb_version}
 
 BuildRequires: libtdb-devel >= %{libtdb_version}
@@ -701,9 +694,6 @@ and use CTDB instead.
 %prep
 %setup -q -n samba-%{version}%{pre_release}
 
-#%patch0 -p 1 -b .samba-4.4.5-fix_resolving_trusted_domain_users.patch
-#%patch1 -p 1 -b .samba-4.4.5-ntvfs_build.patch
-
 %build
 %global _talloc_lib ,talloc,pytalloc,pytalloc-util
 %global _tevent_lib ,tevent,pytevent
@@ -854,7 +844,7 @@ echo "d /run/ctdb 755 root root" >> %{buildroot}%{_tmpfilesdir}/ctdb.conf
 install -d -m 0755 %{buildroot}%{_sysconfdir}/sysconfig
 install -m 0644 packaging/systemd/samba.sysconfig %{buildroot}%{_sysconfdir}/sysconfig/samba
 %if %with_clustering_support
-install -m 0644 ctdb/config/ctdb.sysconfig %{buildroot}%{_sysconfdir}/sysconfig/ctdb
+install -m 0644 ctdb/config/ctdbd.conf %{buildroot}%{_sysconfdir}/sysconfig/ctdb
 %endif
 
 install -m 0644 %{SOURCE201} packaging/README.downgrade
@@ -2011,6 +2001,12 @@ rm -rf %{buildroot}
 %changelog
 * Sun Sep 18 2016 Nico Kadel-Garcia <nkadel@gmail.com> - 4.5.0
 - Update to Samba 4.5.0
+
+* Thu Jul 28 2016 Guenther Deschner <gdeschner@redhat.com> - 4.5.0rc1-0
+- Update to Samba 4.5.0rc1
+
+* Tue Jul 19 2016 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2:4.4.5-1.1
+- https://fedoraproject.org/wiki/Changes/Automatic_Provides_for_Python_RPM_Packages
 
 * Sun Jul 17 2016 Nico Kadel-Garcia <nkadel@gmail.com> - 4.4.5-0.1
 - Rebase on rawhide 4.4.5 .spec file
