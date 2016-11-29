@@ -56,7 +56,7 @@
 %global libwbc_alternatives_suffix -64
 %endif
 
-%global with_dc 1
+%global with_dc 0
 
 %if %{with testsuite}
 # The testsuite only works with a full build right now.
@@ -100,8 +100,7 @@ License:        GPLv3+ and LGPLv3+
 Group:          System Environment/Daemons
 URL:            http://www.samba.org/
 
-#Source0:        samba-%{version}%{pre_release}.tar.xz
-Source0:         https://www.samba.org/ftp/samba/samba-%{version}%{pre_release}.tar.gz
+Source0:        samba-%{version}%{pre_release}.tar.xz
 
 # Red Hat specific replacement-files
 Source1: samba.log
@@ -188,41 +187,32 @@ BuildRequires: glusterfs-devel >= 3.4.0.16
 BuildRequires: libcephfs1-devel
 %endif
 %if %{with_dc}
-# Reduce version requirement for CentOS 7 compatibility,
-# which will not get full gnutls features
-#BuildRequires: gnutls-devel >= 3.4.7
-BuildRequires: gnutls-devel
+BuildRequires: gnutls-devel >= 3.4.7
+# Required by samba-tool to run tests
+BuildRequires: python-crypto
 %endif
 
 # pidl requirements
 BuildRequires: perl(Parse::Yapp)
 
 %if ! %with_internal_talloc
-%global libtalloc_version %{talloc_version}
-
-BuildRequires: libtalloc-devel >= %{libtalloc_version}
-BuildRequires: pytalloc-devel >= %{libtalloc_version}
+BuildRequires: libtalloc-devel >= %{talloc_version}
+BuildRequires: pytalloc-devel >= %{talloc_version}
 %endif
 
 %if ! %with_internal_tevent
-%global libtevent_version %{tevent_version}
-
-BuildRequires: libtevent-devel >= %{libtevent_version}
-BuildRequires: python-tevent >= %{libtevent_version}
+BuildRequires: libtevent-devel >= %{tevent_version}
+BuildRequires: python-tevent >= %{tevent_version}
 %endif
 
 %if ! %with_internal_ldb
-%global libldb_version  %{ldb_version}
-
-BuildRequires: libldb-devel >= %{libldb_version}
-BuildRequires: pyldb-devel >= %{libldb_version}
+BuildRequires: libldb-devel >= %{ldb_version}
+BuildRequires: pyldb-devel >= %{ldb_version}
 %endif
 
 %if ! %with_internal_tdb
-%global libtdb_version %{tdb_version}
-
-BuildRequires: libtdb-devel >= %{libtdb_version}
-BuildRequires: python-tdb >= %{libtdb_version}
+BuildRequires: libtdb-devel >= %{tdb_version}
+BuildRequires: python-tdb >= %{tdb_version}
 %endif
 
 %if %{with testsuite}
@@ -329,8 +319,10 @@ Requires: %{name}-libs = %{samba_depver}
 Requires: %{name}-dc-libs = %{samba_depver}
 Requires: %{name}-python = %{samba_depver}
 Requires: %{name}-winbind = %{samba_depver}
+%if %{with_dc}
 # samba-tool requirements
 Requires: python-crypto
+%endif
 
 Provides: samba4-dc = %{samba_depver}
 Obsoletes: samba4-dc < %{samba_depver}
@@ -1164,6 +1156,7 @@ rm -rf %{buildroot}
 %defattr(-,root,root)
 %{_bindir}/cifsdd
 %{_bindir}/dbwrap_tool
+%{_bindir}/findsmb
 %{_bindir}/nmblookup
 %{_bindir}/oLschema2ldif
 %{_bindir}/regdiff
@@ -1190,7 +1183,7 @@ rm -rf %{buildroot}
 %{_mandir}/man1/regpatch.1*
 %{_mandir}/man1/regshell.1*
 %{_mandir}/man1/regtree.1*
-%exclude %{_mandir}/man1/findsmb.1*
+%{_mandir}/man1/findsmb.1*
 %{_mandir}/man1/log2pcap.1*
 %{_mandir}/man1/rpcclient.1*
 %{_mandir}/man1/sharesec.1*
@@ -1215,8 +1208,6 @@ rm -rf %{buildroot}
 %{_mandir}/man8/tdbrestore.8*
 %{_mandir}/man8/tdbtool.8*
 %endif
-
-%dir %{_libdir}/samba/ldb
 
 %if %with_internal_ldb
 %{_bindir}/ldbadd
@@ -1259,7 +1250,6 @@ rm -rf %{buildroot}
 %{_libdir}/libsamdb.so.*
 %{_libdir}/libsmbconf.so.*
 %{_libdir}/libsmbldap.so.*
-%{_libdir}/libtevent-unix-util.so.*
 %{_libdir}/libtevent-util.so.*
 %{_libdir}/libdcerpc.so.*
 
@@ -1401,6 +1391,8 @@ rm -rf %{buildroot}
 # common libraries
 %{_libdir}/samba/libpopt-samba3-samba4.so
 
+%dir %{_libdir}/samba/ldb
+
 %dir %{_libdir}/samba/pdb
 %{_libdir}/samba/pdb/ldapsam.so
 %{_libdir}/samba/pdb/smbpasswd.so
@@ -1449,6 +1441,9 @@ rm -rf %{buildroot}
 %{_libdir}/samba/ldb/descriptor.so
 %{_libdir}/samba/ldb/dirsync.so
 %{_libdir}/samba/ldb/dns_notify.so
+%if %with_dc
+%{_libdir}/samba/ldb/dsdb_notification.so
+%endif
 %{_libdir}/samba/ldb/extended_dn_in.so
 %{_libdir}/samba/ldb/extended_dn_out.so
 %{_libdir}/samba/ldb/extended_dn_store.so
@@ -1484,6 +1479,9 @@ rm -rf %{buildroot}
 %{_libdir}/samba/ldb/subtree_rename.so
 %{_libdir}/samba/ldb/tombstone_reanimate.so
 %{_libdir}/samba/ldb/update_keytab.so
+%if %with_dc
+%{_libdir}/samba/ldb/vlv.so
+%endif
 %{_libdir}/samba/ldb/wins_ldb.so
 %{_libdir}/samba/vfs/posix_eadb.so
 %dir /var/lib/samba/sysvol
@@ -1521,7 +1519,9 @@ rm -rf %{buildroot}
 %{_libdir}/samba/libdfs-server-ad-samba4.so
 %{_libdir}/samba/libdnsserver-common-samba4.so
 %{_libdir}/samba/libdsdb-module-samba4.so
-#%{_libdir}/samba/libntvfs-samba4.so
+%if ! %{with_dc}
+%{_libdir}/samba/libntvfs-samba4.so
+%endif
 %{_libdir}/samba/bind9/dlz_bind9_9.so
 %else
 %doc packaging/README.dc-libs
@@ -1572,6 +1572,7 @@ rm -rf %{buildroot}
 %{_includedir}/samba-4.0/ndr/ndr_dcerpc.h
 %{_includedir}/samba-4.0/ndr/ndr_drsblobs.h
 %{_includedir}/samba-4.0/ndr/ndr_drsuapi.h
+%{_includedir}/samba-4.0/ndr/ndr_krb5pac.h
 %{_includedir}/samba-4.0/ndr/ndr_svcctl.h
 %{_includedir}/samba-4.0/ndr/ndr_nbt.h
 %{_includedir}/samba-4.0/netapi.h
@@ -1626,7 +1627,6 @@ rm -rf %{buildroot}
 %{_libdir}/libsamba-util.so
 %{_libdir}/libsamdb.so
 %{_libdir}/libsmbconf.so
-%{_libdir}/libtevent-unix-util.so
 %{_libdir}/libtevent-util.so
 %{_libdir}/pkgconfig/dcerpc.pc
 %{_libdir}/pkgconfig/dcerpc_samr.pc
@@ -1901,6 +1901,7 @@ rm -rf %{buildroot}
 %{_sysconfdir}/ctdb/events.d/00.ctdb
 %{_sysconfdir}/ctdb/events.d/01.reclock
 %{_sysconfdir}/ctdb/events.d/05.system
+%{_sysconfdir}/ctdb/events.d/06.nfs
 %{_sysconfdir}/ctdb/events.d/10.external
 %{_sysconfdir}/ctdb/events.d/10.interface
 %{_sysconfdir}/ctdb/events.d/11.natgw
@@ -1923,17 +1924,22 @@ rm -rf %{buildroot}
 %{_sbindir}/ctdbd
 %{_sbindir}/ctdbd_wrapper
 %{_bindir}/ctdb
-%{_libexecdir}/ctdb/ctdb_natgw
-%{_libexecdir}/ctdb/ctdb_recovery_helper
-%{_libexecdir}/ctdb/smnotify
 %{_bindir}/ping_pong
 %{_bindir}/ltdbtool
 %{_bindir}/ctdb_diagnostics
 %{_bindir}/onnode
-%{_libexecdir}/ctdb/ctdb_lock_helper
+%dir %{_libexecdir}/ctdb
 %{_libexecdir}/ctdb/ctdb_event_helper
+%{_libexecdir}/ctdb/ctdb_killtcp
+%{_libexecdir}/ctdb/ctdb_lock_helper
+%{_libexecdir}/ctdb/ctdb_lvs
+%{_libexecdir}/ctdb/ctdb_mutex_fcntl_helper
+%{_libexecdir}/ctdb/ctdb_natgw
+%{_libexecdir}/ctdb/ctdb_recovery_helper
+%{_libexecdir}/ctdb/smnotify
 
 %{_mandir}/man1/ctdb.1.gz
+%{_mandir}/man1/ctdb_diagnostics.1.gz
 %{_mandir}/man1/ctdbd.1.gz
 %{_mandir}/man1/onnode.1.gz
 %{_mandir}/man1/ltdbtool.1.gz
@@ -1946,39 +1952,35 @@ rm -rf %{buildroot}
 
 %files -n ctdb-tests
 %defattr(-,root,root)
-%dir %{_libdir}/ctdb-tests
-%{_libdir}/ctdb-tests/comm_client_test
-%{_libdir}/ctdb-tests/comm_server_test
-%{_libdir}/ctdb-tests/comm_test
-%{_libdir}/ctdb-tests/ctdb_bench
-%{_libdir}/ctdb-tests/ctdb_fetch
-%{_libdir}/ctdb-tests/ctdb_fetch_one
-%{_libdir}/ctdb-tests/ctdb_fetch_readonly_loop
-%{_libdir}/ctdb-tests/ctdb_fetch_readonly_once
-%{_libdir}/ctdb-tests/ctdb_functest
-%{_libdir}/ctdb-tests/ctdb_lock_tdb
-%{_libdir}/ctdb-tests/ctdb_persistent
-%{_libdir}/ctdb-tests/ctdb_porting_tests
-%{_libdir}/ctdb-tests/ctdb_randrec
-%{_libdir}/ctdb-tests/ctdb_store
-%{_libdir}/ctdb-tests/ctdb_stubtest
-%{_libdir}/ctdb-tests/ctdb_takeover_tests
-%{_libdir}/ctdb-tests/ctdb_trackingdb_test
-%{_libdir}/ctdb-tests/ctdb_transaction
-%{_libdir}/ctdb-tests/ctdb_traverse
-%{_libdir}/ctdb-tests/ctdb_update_record
-%{_libdir}/ctdb-tests/ctdb_update_record_persistent
-%{_libdir}/ctdb-tests/db_hash_test
-%{_libdir}/ctdb-tests/pkt_read_test
-%{_libdir}/ctdb-tests/pkt_write_test
-%{_libdir}/ctdb-tests/protocol_client_test
-%{_libdir}/ctdb-tests/protocol_types_test
-%{_libdir}/ctdb-tests/rb_test
-%{_libdir}/ctdb-tests/reqid_test
-%{_libdir}/ctdb-tests/srvid_test
+%dir %{_libexecdir}/ctdb/tests
+%{_libexecdir}/ctdb/tests/comm_client_test
+%{_libexecdir}/ctdb/tests/comm_server_test
+%{_libexecdir}/ctdb/tests/comm_test
+%{_libexecdir}/ctdb/tests/ctdb_packet_parse
+%{_libexecdir}/ctdb/tests/ctdb_takeover_tests
+%{_libexecdir}/ctdb/tests/db_hash_test
+%{_libexecdir}/ctdb/tests/fake_ctdbd
+%{_libexecdir}/ctdb/tests/fetch_loop
+%{_libexecdir}/ctdb/tests/fetch_loop_key
+%{_libexecdir}/ctdb/tests/fetch_readonly
+%{_libexecdir}/ctdb/tests/fetch_readonly_loop
+%{_libexecdir}/ctdb/tests/fetch_ring
+%{_libexecdir}/ctdb/tests/g_lock_loop
+%{_libexecdir}/ctdb/tests/lock_tdb
+%{_libexecdir}/ctdb/tests/message_ring
+%{_libexecdir}/ctdb/tests/pkt_read_test
+%{_libexecdir}/ctdb/tests/pkt_write_test
+%{_libexecdir}/ctdb/tests/porting_tests
+%{_libexecdir}/ctdb/tests/protocol_client_test
+%{_libexecdir}/ctdb/tests/protocol_types_test
+%{_libexecdir}/ctdb/tests/rb_test
+%{_libexecdir}/ctdb/tests/reqid_test
+%{_libexecdir}/ctdb/tests/srvid_test
+%{_libexecdir}/ctdb/tests/transaction_loop
+%{_libexecdir}/ctdb/tests/update_record
+%{_libexecdir}/ctdb/tests/update_record_persistent
 %{_bindir}/ctdb_run_tests
 %{_bindir}/ctdb_run_cluster_tests
-%dir %{_datadir}/ctdb-tests
 %dir %{_datadir}/ctdb-tests/eventscripts
 %{_datadir}/ctdb-tests/eventscripts/etc-ctdb/events.d
 %{_datadir}/ctdb-tests/eventscripts/etc-ctdb/functions
@@ -1990,6 +1992,7 @@ rm -rf %{buildroot}
 %dir %{_datadir}/ctdb-tests/scripts
 %{_datadir}/ctdb-tests/scripts/common.sh
 %{_datadir}/ctdb-tests/scripts/integration.bash
+%{_datadir}/ctdb-tests/scripts/script_install_paths.sh
 %{_datadir}/ctdb-tests/scripts/test_wrap
 %{_datadir}/ctdb-tests/scripts/unit.sh
 %dir %{_datadir}/ctdb-tests/simple
@@ -1999,20 +2002,27 @@ rm -rf %{buildroot}
 %endif # with_clustering_support
 
 %changelog
-* Sun Sep 18 2016 Nico Kadel-Garcia <nkadel@gmail.com> - 4.5.0
+%changelog
+* Sun Sep 18 2016 Nico Kadel-Garcia <nkadel@gmail.com> - 4.5.0-0.1
+- Separate all hyphenated words in .spec text to word pairs for RPM/emacs use
+- Roll back krb5-devel requirement to 1.10
+- Activate with_dc
+- Add or exclude libraries fir with_dc compilation
+
+* Wed Sep 07 2016 Guenther Deschner <gdeschner@redhat.com> - 4.5.0-1
 - Update to Samba 4.5.0
+
+* Mon Aug 29 2016 Guenther Deschner <gdeschner@redhat.com> - 4.5.0rc3-0
+- Update to Samba 4.5.0rc3
+
+* Mon Aug 15 2016 Guenther Deschner <gdeschner@redhat.com> - 4.5.0rc2-0
+- Update to Samba 4.5.0rc2
 
 * Thu Jul 28 2016 Guenther Deschner <gdeschner@redhat.com> - 4.5.0rc1-0
 - Update to Samba 4.5.0rc1
 
 * Tue Jul 19 2016 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2:4.4.5-1.1
 - https://fedoraproject.org/wiki/Changes/Automatic_Provides_for_Python_RPM_Packages
-
-* Sun Jul 17 2016 Nico Kadel-Garcia <nkadel@gmail.com> - 4.4.5-0.1
-- Rebase on rawhide 4.4.5 .spec file
-- Separate all hyphenated words in .spec text to word pairs for RPM/emacs use
-- Activate with_dc, base with_mitkrb5 on value of with_dc
-- Eliminate version requirement of gnutls, for CentOS 7 compatibility
 
 * Thu Jul 07 2016 Guenther Deschner <gdeschner@redhat.com> - 4.4.5-1
 - Update to Samba 4.4.5
@@ -3323,7 +3333,7 @@ rm -rf %{buildroot}
 
 * Wed Dec 17 2003 Felipe Alfaro Solana <felipe_alfaro@linuxmail.org> 3.0.1-1
 - Update to 3.0.1
-- Removed testparm patch as it's already merged
+- Removed testparm patch as it is already merged
 - Removed Samba.7* man pages
 - Fixed .buildroot patch
 - Fixed .pie patch
@@ -3532,14 +3542,14 @@ rm -rf %{buildroot}
 - Add patch from Jeremy Allison to fix IA64 alignment problems (#51497)
 
 * Mon Aug 13 2001 Trond Eivind Glomsrød <teg@redhat.com>
-- Do not include smbpasswd in samba, it's in samba-common (#51598)
-- Add a disabled "obey pam restrictions" statement - it's not
+- Do not include smbpasswd in samba, it is in samba-common (#51598)
+- Add a disabled "obey pam restrictions" statement - it is not
   active, as we use encrypted passwords, but if the admin turns
   encrypted passwords off the choice is available. (#31351)
 
 * Wed Aug  8 2001 Trond Eivind Glomsrød <teg@redhat.com>
 - Use /var/cache/samba instead of /var/lock/samba
-- Remove "domain controller" keyword from smb.conf, it's
+- Remove "domain controller" keyword from smb.conf, it is
   deprecated (from #13704)
 - Sync some examples with smb.conf.default
 - Fix password synchronization (#16987)
@@ -3565,7 +3575,7 @@ rm -rf %{buildroot}
 
 * Tue Jun 19 2001 Trond Eivind Glomsrød <teg@redhat.com>
 - (these changes are from the non-head version)
-- do not include /usr/sbin/samba, it's the same as the initscript
+- Do not include /usr/sbin/samba, it is the same as the initscript
 - unset TMPDIR, as samba cannot write into a TMPDIR owned
   by root (#41193)
 - Add pidfile: lines for smbd and nmbd and a config: line
@@ -3620,8 +3630,8 @@ rm -rf %{buildroot}
 * Mon Mar 26 2001 Nalin Dahyabhai <nalin@redhat.com>
 - tweak the PAM code some more to try to do a setcred() after initgroups()
 - pull in all of the optflags on i386 and sparc
-- do not explicitly enable Kerberos support -- it's only used for password
-  checking, and if PAM is enabled it's a no-op anyway
+- do not explicitly enable Kerberos support -- it is only used for password
+  checking, and if PAM is enabled it is a no-op anyway
 
 * Mon Mar  5 2001 Tim Waugh <twaugh@redhat.com>
 - exit successfully from preun script (bug #30644).

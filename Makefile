@@ -5,6 +5,7 @@
 # Assure that sorting is case sensitive
 LANG=C
 
+#MOCKS+=fedora-rawhide-x86_64
 MOCKS+=samba4repo-f24-x86_64
 MOCKS+=samba4repo-7-x86_64
 # Give up on RHEL 6, current upstream SRPMs require systemd
