@@ -6,8 +6,8 @@
 LANG=C
 
 #MOCKS+=fedora-rawhide-x86_64
-MOCKS+=samba4repo-f24-x86_64
-MOCKS+=samba4repo-7-x86_64
+MOCKS+=samba4repo-f25-x86_64
+#MOCKS+=samba4repo-7-x86_64
 # Give up on RHEL 6, current upstream SRPMs require systemd
 #MOCKS+=samba4repo-6-x86_64
 
@@ -42,14 +42,14 @@ $(MOCKS):: verifyspec FORCE
 	else \
 		echo "	Building $@ RPMS with $(SPEC)"; \
 		rm -rf $@; \
-		mock -q -r $@ --sources=$(PWD) \
+		mock -q --configdir=$(PWD)/.. -r $@ --sources=$(PWD) \
 		    --resultdir=$(PWD)/$@ \
 		    --buildsrpm --spec=$(SPEC); \
 		echo "Storing $@/*.src.rpm in $@.rpm"; \
 		/bin/mv $@/*.src.rpm $@.src.rpm; \
 		echo "Actally building RPMS in $@"; \
 		rm -rf $@; \
-		mock -q -r $@ \
+		mock -q --configdir=$(PWD)/.. -r $@ \
 		     --resultdir=$(PWD)/$@ \
 		     $@.src.rpm; \
 	fi

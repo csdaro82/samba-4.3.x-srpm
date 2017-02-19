@@ -29,10 +29,17 @@
 %global with_libsmbclient 1
 %global with_libwbclient 1
 
-%global with_internal_talloc 0
-%global with_internal_tevent 0
-%global with_internal_tdb 0
-%global with_internal_ldb 0
+#%global with_internal_talloc 0
+#%global with_internal_tevent 0
+#%global with_internal_tdb 0
+#%global with_internal_ldb 0
+# Use internal!!! The dependency chain is out of hand,
+# and very few non-Samba components use these
+# <nkadel@gmail.com>
+%global with_internal_talloc 1
+%global with_internal_tevent 1
+%global with_internal_tdb 1
+%global with_internal_ldb 1
 
 %global with_profiling 1
 
