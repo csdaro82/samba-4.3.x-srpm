@@ -8,11 +8,11 @@
 
 %define main_release 0.1
 
-%define samba_version 4.5.1
+%define samba_version 4.5.5
 %define talloc_version 2.1.8
-%define tdb_version 1.3.11
-%define tevent_version 0.9.30
-%define ldb_version 1.1.27
+%define tdb_version 1.3.12
+%define tevent_version 0.9.31
+%define ldb_version 1.1.29
 # This should be rc1 or nil
 %define pre_release %nil
 
@@ -161,7 +161,7 @@ BuildRequires: dbus-devel
 BuildRequires: docbook-style-xsl
 BuildRequires: e2fsprogs-devel
 BuildRequires: gawk
-BuildRequires: krb5-devel >= 1.10
+BuildRequires: krb5-devel >= 1.14
 BuildRequires: libacl-devel
 BuildRequires: libaio-devel
 BuildRequires: libarchive-devel
@@ -1354,19 +1354,23 @@ rm -rf %{buildroot}
 
 %if %{with_internal_tevent}
 %{_libdir}/samba/libtevent.so.0
-%{_libdir}/samba/libtevent.so.%{tevent_version}
+#%{_libdir}/samba/libtevent.so.%{tevent_version}
+%{_libdir}/samba/libtevent.so.*
 %endif
 
 %if %{with_internal_tdb}
 %{_libdir}/samba/libtdb.so.1
-%{_libdir}/samba/libtdb.so.%{tdb_version}
+#%{_libdir}/samba/libtdb.so.%{tdb_version}
+%{_libdir}/samba/libtdb.so.*
 %endif
 
 %if %{with_internal_ldb}
 %{_libdir}/samba/libldb.so.1
-%{_libdir}/samba/libldb.so.%{ldb_version}
+#%{_libdir}/samba/libldb.so.%{ldb_version}
+%{_libdir}/samba/libldb.so.*
 %{_libdir}/samba/libpyldb-util.so.1
-%{_libdir}/samba/libpyldb-util.so.%{ldb_version}
+#%{_libdir}/samba/libpyldb-util.so.%{ldb_version}
+%{_libdir}/samba/libpyldb-util.so.*
 %{_mandir}/man3/ldb.3.gz
 %endif
 
